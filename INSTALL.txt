@@ -1,0 +1,116 @@
+========================================
+ Neovim config - install / bootstrap
+ (no-sudo / user-space install - Fedora)
+========================================
+
+This config lives at ~/.config/nvim.
+Everything below installs into your home directory only
+(~/.local, pip --user, mason). No root/sudo required.
+
+Assumes git, curl, tar, python3 are already available (they are on
+stock Fedora). If any is missing, ask your admin to install it once -
+that's a one-time exception, everything else here is user-space.
+
+----------------------------------------
+1. Neovim itself (if not already installed, or too old - need >= 0.9)
+----------------------------------------
+
+nvim --version   # check first, skip this step if >= 0.9
+
+mkdir -p ~/.local
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+tar xzf nvim-linux-x86_64.tar.gz
+rm -rf ~/.local/nvim-linux-x86_64
+mv nvim-linux-x86_64 ~/.local/
+rm nvim-linux-x86_64.tar.gz
+
+# add to PATH (put this in ~/.bashrc or ~/.zshrc)
+echo 'export PATH="$HOME/.local/nvim-linux-x86_64/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+nvim --version   # confirm it works now
+
+----------------------------------------
+2. ripgrep (optional but recommended, used by fuzzy-finder style plugins)
+----------------------------------------
+
+mkdir -p ~/.local/bin
+curl -LO https://github.com/BurntSushi/ripgrep/releases/latest/download/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz
+tar xzf ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz
+cp ripgrep-14.1.1-x86_64-unknown-linux-musl/rg ~/.local/bin/
+rm -rf ripgrep-14.1.1-x86_64-unknown-linux-musl*
+
+(check https://github.com/BurntSushi/ripgrep/releases for the current
+version number if 14.1.1 is no longer latest)
+
+----------------------------------------
+3. Clone this config
+----------------------------------------
+
+mv ~/.config/nvim ~/.config/nvim.bak 2>/dev/null   # back up any existing config
+git clone <YOUR_REPO_URL> ~/.config/nvim
+
+----------------------------------------
+4. Norminette (42 school C style checker)
+----------------------------------------
+
+python3 -m pip install --user norminette
+
+----------------------------------------
+5. c_formatter_42 (C autoformatter for the 42 norm)
+----------------------------------------
+
+python3 -m pip install --user c_formatter_42
+
+----------------------------------------
+6. Make sure ~/.local/bin is on PATH
+----------------------------------------
+
+pip installs the norminette / c_formatter_42 executables into
+~/.local/bin - make sure that's in your PATH (put this in ~/.bashrc
+or ~/.zshrc if not already there):
+
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+which norminette
+which c_formatter_42
+
+----------------------------------------
+7. clangd (C/C++ LSP)
+----------------------------------------
+
+Do NOT install via dnf (needs sudo). Instead let Mason install it for
+you the first time you open Neovim - Mason downloads binaries into
+~/.local/share/nvim/mason, no root needed. Nothing to do here manually,
+just continue to step 8 - mason-lspconfig.nvim is already configured
+to auto-install clangd.
+
+----------------------------------------
+8. First launch
+----------------------------------------
+
+nvim
+
+lazy.nvim will bootstrap itself and install all plugins automatically
+on first start (including Mason installing clangd). Wait for it to
+finish, then restart nvim.
+
+Useful commands once inside nvim:
+  :Lazy        -> manage/update plugins
+  :Mason       -> manage/install LSP servers, linters, formatters
+  :checkhealth -> diagnose any issues
+
+----------------------------------------
+9. Verify norminette + formatter work
+----------------------------------------
+
+norminette --version
+c_formatter_42 --version
+
+Open a .c file, save it -> norminette diagnostics should appear.
+Run :ConformInfo inside nvim to confirm c_formatter_42 is detected.
+
+========================================
+ Done
+========================================
