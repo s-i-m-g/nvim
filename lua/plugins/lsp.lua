@@ -1,15 +1,17 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    dependencies = {
-      { "williamboman/mason.nvim", config = true },
-      "williamboman/mason-lspconfig.nvim",
+  },
+  {
+    "williamboman/mason.nvim",
+    opts = {},
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = { "neovim/nvim-lspconfig" },
+    opts = {
+      ensure_installed = { "clangd" },
+      -- mason-lspconfig calls vim.lsp.enable() for installed servers automatically
     },
-    config = function()
-      require("mason-lspconfig").setup({
-        ensure_installed = { "clangd" },
-      })
-      require("lspconfig").clangd.setup({})
-    end,
   },
 }
