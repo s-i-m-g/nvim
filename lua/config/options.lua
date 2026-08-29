@@ -18,5 +18,8 @@ opt.clipboard = "unnamedplus"
 opt.splitright = true
 opt.splitbelow = true
 
+opt.cursorline = true
+opt.cursorlineopt = "number" -- highlight the line number only, not the whole line
+
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
